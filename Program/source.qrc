@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="newPrefix">
+    <file>turnamen-mobile-legends-holland-cafe_20180423_203207.jpg</file>
+    <file>images__1_-removebg-preview.png</file>
+    <file>Group 2.png</file>
+    <file>Group 3.png</file>
+    <file>Group 4.png</file>
+  </qresource>
+</RCC>
