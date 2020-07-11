@@ -9,9 +9,12 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+import connector
 
 class Ui_Dialog(object):
+    products = []
+    tmpProduct = ()
+    sudahAda = False
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(696, 480)
@@ -70,7 +73,7 @@ class Ui_Dialog(object):
         self.LE_jumlahBarang.setFont(font)
         self.LE_jumlahBarang.setStyleSheet("background: #EBEBEB;")
         self.LE_jumlahBarang.setObjectName("LE_jumlahBarang")
-        self.LE_daftarBarang = QtWidgets.QLineEdit(Dialog)
+        self.LE_daftarBarang = QtWidgets.QTextEdit(Dialog)
         self.LE_daftarBarang.setGeometry(QtCore.QRect(120, 230, 451, 151))
         self.LE_daftarBarang.setStyleSheet("background: #EBEBEB;")
         self.LE_daftarBarang.setObjectName("LE_daftarBarang")
@@ -121,6 +124,12 @@ class Ui_Dialog(object):
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
         self.line.setObjectName("line")
 
+        self.LE_idBarang.editingFinished.connect(self.getBarang)
+        self.LE_jumlahBarang.editingFinished.connect(self.addBarang)
+        self.disableJmlBarang()
+        self.LE_customer.setFocus()
+        self.LE_daftarBarang.setText("ID\tNAMA\t\tQTY\tHARGA")
+        self.PB_beli.clicked.connect(self.beliBang)
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -135,6 +144,84 @@ class Ui_Dialog(object):
         self.PB_dataTransaksi.setText(_translate("Dialog", "LIHAT DATA TRANSAKSI"))
         self.PB_kembali.setText(_translate("Dialog", "KEMBALI"))
         self.label_5.setText(_translate("Dialog", "Transaksi"))
+
+    def disableJmlBarang(self):
+        self.LE_jumlahBarang.setDisabled(True)
+        self.LE_idBarang.setFocus()
+        self.LE_idBarang.setText("")
+        self.LE_jumlahBarang.setText("")
+
+    def enableJmlBarang(self):
+        self.LE_jumlahBarang.setDisabled(False)
+        self.LE_jumlahBarang.setFocus()
+
+    def getBarang(self):
+        cursor = connector.cnx.cursor()
+        idbarang = self.LE_idBarang.text()
+        query = ("SELECT * FROM produk WHERE id = %s")
+        cursor.execute(query, (idbarang,))
+        results = cursor.fetchall()
+        
+        if cursor.rowcount == 0:
+            print("Tidak ada data")
+            self.LE_idBarang.setFocus()
+        else:
+            
+            for data in results:
+                self.tmpProduct = data
+                for products in self.products:
+                    if products[0] == data[0]:
+                        self.sudahAda = True
+
+            if self.sudahAda:
+                print("Sudah ada")
+                self.tmpProduct = ()
+                self.sudahAda = False
+                self.LE_idBarang.setFocus()
+            else:
+                self.enableJmlBarang()
+        cursor.close()
+
+    def addBarang(self):
+        jmlBarang = self.LE_jumlahBarang.text()
+        if jmlBarang != "":
+            barang = "ID\tNAMA\t\tQTY\tHARGA"
+            idBarang = self.LE_idBarang.text()
+            self.products.append((idBarang, jmlBarang, self.tmpProduct[1],  self.tmpProduct[2]))
+
+            for product in self.products:
+                data = '\n{}\t{}\t\t{}\t{}'.format(product[0], product[2], product[1], product[3])
+                barang+=data
+                print(product[0], product[1], product[2])
+                self.LE_daftarBarang.setText(barang)
+            self.disableJmlBarang()
+
+    def beliBang(self):
+        customer = self.LE_customer.text()
+        jmlBarang = 0
+        total = 0
+        for product in self.products:
+            total += int(product[1]) * int(product[3])
+            jmlBarang = jmlBarang + 1
+
+        print(self.products)
+        print(total, jmlBarang)
+
+        cursor = connector.cnx.cursor()
+        val = (customer, jmlBarang, total)
+        query = ("INSERT INTO transaksi VALUES (null, %s, %s, %s)")
+        cursor.execute(query, val)
+        connector.cnx.commit()
+        cursor.close()
+
+        self.clear()
+
+    def clear(self):
+        self.disableJmlBarang()
+        self.LE_daftarBarang.setText("ID\tNAMA\t\tQTY\tHARGA")
+        self.LE_customer.setText("")
+        self.LE_customer.setFocus()
+
 import source_rc
 
 
