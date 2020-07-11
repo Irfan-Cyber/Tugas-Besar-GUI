@@ -10,6 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import connector
+import dataTransaksi
 
 class Ui_Dialog(object):
     products = []
@@ -130,6 +131,7 @@ class Ui_Dialog(object):
         self.LE_customer.setFocus()
         self.LE_daftarBarang.setText("ID\tNAMA\t\tQTY\tHARGA")
         self.PB_beli.clicked.connect(self.beliBang)
+        self.PB_dataTransaksi.clicked.connect(self.lihatTransaksi)
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -221,6 +223,12 @@ class Ui_Dialog(object):
         self.LE_daftarBarang.setText("ID\tNAMA\t\tQTY\tHARGA")
         self.LE_customer.setText("")
         self.LE_customer.setFocus()
+
+    def lihatTransaksi(self):
+        dialog = QtWidgets.QDialog()
+        dialog.ui = dataTransaksi.Ui_Dialog()
+        dialog.ui.setupUi(dialog)
+        dialog.exec_()
 
 import source_rc
 

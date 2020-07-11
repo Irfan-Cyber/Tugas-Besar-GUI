@@ -91,6 +91,7 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
+        self.getData()
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
@@ -98,15 +99,32 @@ class Ui_Dialog(object):
         self.label_3.setText(_translate("Dialog", "Transaksi"))
         self.label_4.setText(_translate("Dialog", "Data Transaksi"))
         item = self.table_dataTransaksi.horizontalHeaderItem(0)
-        item.setText(_translate("Dialog", "Customer"))
-        item = self.table_dataTransaksi.horizontalHeaderItem(1)
         item.setText(_translate("Dialog", "ID Customer"))
+        item = self.table_dataTransaksi.horizontalHeaderItem(1)
+        item.setText(_translate("Dialog", "Customer"))
         item = self.table_dataTransaksi.horizontalHeaderItem(2)
         item.setText(_translate("Dialog", "Jumlah Barang"))
         item = self.table_dataTransaksi.horizontalHeaderItem(3)
         item.setText(_translate("Dialog", "Total Bayar"))
         self.label_6.setText(_translate("Dialog", "Data Transaksi"))
-        self.PB_kembali3.setText(_translate("Dialog", "KEMBALI"))
+        self.PB_kembali3.setText(_translate("Dialog", "KEMBALI"))\
+       
+
+
+    def getData(self):
+        import connector
+        cursor = connector.cnx.cursor()
+
+        query = ("SELECT * FROM transaksi")
+        cursor.execute(query)
+        results = cursor.fetchall()
+        i = 0
+        for data in results:
+            self.table_dataTransaksi.setItem(i,0, QtWidgets.QTableWidgetItem(str(data[0])))
+            self.table_dataTransaksi.setItem(i,1, QtWidgets.QTableWidgetItem(data[1]))
+            self.table_dataTransaksi.setItem(i,2, QtWidgets.QTableWidgetItem(str(data[2])))
+            self.table_dataTransaksi.setItem(i,3, QtWidgets.QTableWidgetItem(str(data[3])))
+            i = i + 1
 import source_rc
 
 

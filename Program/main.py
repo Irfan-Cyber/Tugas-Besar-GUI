@@ -145,7 +145,6 @@ class Ui_Dialog(object):
         if cursor.rowcount == 0:
             print("Tidak ada data")
         else:
-            connector.cnx.close()
             self.startDashboard()
             print("Data Ada")
 
