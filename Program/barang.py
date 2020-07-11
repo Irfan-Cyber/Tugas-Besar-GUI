@@ -1,8 +1,7 @@
-
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QMessageBox
 import connector
+import dataBarang
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -114,10 +113,10 @@ class Ui_Dialog(object):
         self.PB_kembali2.setStyleSheet("background: #AAB0B6;")
         self.PB_kembali2.setObjectName("PB_kembali2")
 
-        
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         self.lineEdit.editingFinished.connect(self.checkProduk)
         self.PB_tambah.clicked.connect(self.simpanBarang)
+        self.PB_dataBarang.clicked.connect(self.lihatBarang)
         self.clear()
         self.retranslateUi(Dialog)
 
@@ -133,6 +132,12 @@ class Ui_Dialog(object):
         self.PB_tambah.setText(_translate("Dialog", "TAMBAH"))
         self.PB_dataBarang.setText(_translate("Dialog", "LIHAT DATA BARANG"))
         self.PB_kembali2.setText(_translate("Dialog", "KEMBALI"))
+
+    def lihatBarang(self):
+        dialog = QtWidgets.QDialog()
+        dialog.ui = dataBarang.Ui_Dialog()
+        dialog.ui.setupUi(dialog)
+        dialog.exec_()
 
     def clear(self):
         self.lineEdit.setDisabled(False)

@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+import connector
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -84,6 +84,8 @@ class Ui_Dialog(object):
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
+        self.getData()
+
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
@@ -92,12 +94,27 @@ class Ui_Dialog(object):
         item = self.table_dataBarang.horizontalHeaderItem(0)
         item.setText(_translate("Dialog", "ID"))
         item = self.table_dataBarang.horizontalHeaderItem(1)
-        item.setText(_translate("Dialog", "ID Barang"))
+        item.setText(_translate("Dialog", "Nama"))
         item = self.table_dataBarang.horizontalHeaderItem(2)
-        item.setText(_translate("Dialog", "Nama Barang"))
+        item.setText(_translate("Dialog", "Harga"))
         item = self.table_dataBarang.horizontalHeaderItem(3)
-        item.setText(_translate("Dialog", "Stok Barang"))
+        item.setText(_translate("Dialog", "Stok"))
         self.PB_kembali4.setText(_translate("Dialog", "KEMBALI"))
+
+    def getData(self):
+        cursor = connector.cnx.cursor()
+
+        query = ("SELECT * FROM produk")
+        cursor.execute(query)
+        results = cursor.fetchall()
+        i = 0
+        for data in results:
+            self.table_dataBarang.setItem(i,0, QtWidgets.QTableWidgetItem(data[0]))
+            self.table_dataBarang.setItem(i,1, QtWidgets.QTableWidgetItem(data[1]))
+            self.table_dataBarang.setItem(i,2, QtWidgets.QTableWidgetItem(str(data[2])))
+            self.table_dataBarang.setItem(i,3, QtWidgets.QTableWidgetItem(str(data[3])))
+            i = i + 1
+
 import source_rc
 
 
