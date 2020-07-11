@@ -9,9 +9,12 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import source_rc
+import sys
+import transaksi
+import barang
 
-
-class Ui_Dialog(object):
+class Dashboard(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(696, 480)
@@ -78,6 +81,9 @@ class Ui_Dialog(object):
         self.PB_hiburan.setStyleSheet("background: #AAB0B6;")
         self.PB_hiburan.setObjectName("PB_hiburan")
 
+        self.PB_barang.clicked.connect(self.showBarang)
+        self.PB_transaksi.clicked.connect(self.showTransaksi)
+
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -89,14 +95,23 @@ class Ui_Dialog(object):
         self.PB_barang.setText(_translate("Dialog", "BARANG"))
         self.PB_data.setText(_translate("Dialog", "DATA"))
         self.PB_hiburan.setText(_translate("Dialog", "HIBURAN"))
-import source_rc
 
+    def showBarang(self):
+        dialog = QtWidgets.QDialog()
+        dialog.ui = barang.Ui_Dialog()
+        dialog.ui.setupUi(dialog)
+        dialog.exec_()
+
+    def showTransaksi(self):
+        dialog = QtWidgets.QDialog()
+        dialog.ui = transaksi.Ui_Dialog()
+        dialog.ui.setupUi(dialog)
+        dialog.exec_()
 
 if __name__ == "__main__":
-    import sys
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
-    ui = Ui_Dialog()
+    ui = Dashboard()
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())

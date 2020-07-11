@@ -123,6 +123,8 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
+        self.lineEdit.returnPressed.connect(self.checkProduk)
+        self.clear()
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
@@ -136,8 +138,20 @@ class Ui_Dialog(object):
         self.PB_tambah.setText(_translate("Dialog", "TAMBAH"))
         self.PB_dataBarang.setText(_translate("Dialog", "LIHAT DATA BARANG"))
         self.PB_kembali2.setText(_translate("Dialog", "KEMBALI"))
-import source_rc
 
+    def clear(self):
+        self.lineEdit_2.setDisabled(True)
+        self.lineEdit_3.setDisabled(True)
+        self.lineEdit_4.setDisabled(True)
+        self.PB_tambah.setDisabled(True)
+
+    def checkProduk(self):
+        self.lineEdit_2.setDisabled(False)
+        self.lineEdit_3.setDisabled(False)
+        self.lineEdit_4.setDisabled(False)
+        self.PB_tambah.setDisabled(False)
+        
+import source_rc
 
 if __name__ == "__main__":
     import sys

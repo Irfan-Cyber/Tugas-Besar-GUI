@@ -9,6 +9,10 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import connector
+import dashboard
+import source_rc
+import sys
 
 
 class Ui_Dialog(object):
@@ -113,9 +117,10 @@ class Ui_Dialog(object):
         self.label_8.setStyleSheet("image: url(:/newPrefix/Group 3.png);")
         self.label_8.setText("")
         self.label_8.setObjectName("label_8")
-
+        self.PB_login.clicked.connect(self.doLogin)
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
+        
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
@@ -126,11 +131,39 @@ class Ui_Dialog(object):
         self.PB_login.setText(_translate("Dialog", "Login"))
         self.LE_username.setPlaceholderText(_translate("Dialog", "Username"))
         self.LE_Password.setPlaceholderText(_translate("Dialog", "Password"))
-import source_rc
+
+
+    def doLogin(self):
+        self.PB_login.setText("Loading")
+        username = self.LE_username.text()
+        password = self.LE_Password.text()
+        cursor = connector.cnx.cursor()
+
+        query = ("SELECT * FROM user WHERE username = %s AND password = %s")
+        cursor.execute(query, (username, password))
+        result = cursor.fetchall()
+        if cursor.rowcount == 0:
+            print("Tidak ada data")
+        else:
+            connector.cnx.close()
+            self.startDashboard()
+            print("Data Ada")
+
+        print(username)
+        print(password)
+        cursor.close()
+    
+    def startDashboard(self):
+        dialog = QtWidgets.QDialog()
+        dialog.ui = dashboard.Dashboard()
+        dialog.ui.setupUi(dialog)
+        dialog.exec_()
+        
+
+
 
 
 if __name__ == "__main__":
-    import sys
     app = QtWidgets.QApplication(sys.argv)
     Dialog = QtWidgets.QDialog()
     ui = Ui_Dialog()
