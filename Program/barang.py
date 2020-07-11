@@ -114,10 +114,12 @@ class Ui_Dialog(object):
         self.PB_kembali2.setStyleSheet("background: #AAB0B6;")
         self.PB_kembali2.setObjectName("PB_kembali2")
 
-        self.retranslateUi(Dialog)
+        
         QtCore.QMetaObject.connectSlotsByName(Dialog)
-        self.lineEdit.returnPressed.connect(self.checkProduk)
+        self.lineEdit.editingFinished.connect(self.checkProduk)
+        self.PB_tambah.clicked.connect(self.simpanBarang)
         self.clear()
+        self.retranslateUi(Dialog)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
@@ -140,13 +142,16 @@ class Ui_Dialog(object):
         self.PB_tambah.setDisabled(True)
         self.PB_tambah.setText("TAMBAH")
 
-    def checkProduk(self):
+        self.lineEdit.setText("")
+        self.lineEdit_2.setText("")
+        self.lineEdit_3.setText("")
+        self.lineEdit_4.setText("")
 
+    def checkProduk(self):
         self.lineEdit_2.setDisabled(False)
         self.lineEdit_3.setDisabled(False)
         self.lineEdit_4.setDisabled(False)
         self.PB_tambah.setDisabled(False)
-
         idbarang = self.lineEdit.text()
         cursor = connector.cnx.cursor()
 
@@ -164,16 +169,15 @@ class Ui_Dialog(object):
 
             msgBox = QMessageBox()
             msgBox.setIcon(QMessageBox.Information)
-            msgBox.setText("Data sudah ada")
-            msgBox.setWindowTitle("Anda ingin melakukan apa?")
-            #msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+            msgBox.setText("Anda ingin melakukan apa?")
+            msgBox.setWindowTitle("Data sudah ada")
             msgBox.addButton(QPushButton("Update"), QMessageBox.YesRole)
             msgBox.addButton(QPushButton("Hapus"), QMessageBox.NoRole)
             returnValue = msgBox.exec()
 
             if returnValue == 0:
                 #update
-                self.PB_tambah.setText("Update")
+                self.PB_tambah.setText("UPDATE")
             else:
                 #delete
                 query = ("DELETE FROM produk WHERE id = %s")
@@ -181,6 +185,34 @@ class Ui_Dialog(object):
                 connector.cnx.commit()
                 self.clear()
         cursor.close()
+
+    def simpanBarang(self):
+        id = self.lineEdit.text()
+        nama = self.lineEdit_2.text()
+        harga = self.lineEdit_3.text()
+        stok = self.lineEdit_4.text()
+
+        if nama != "" and harga != "" and harga != "" and stok != "":
+            if self.PB_tambah.text() == "TAMBAH":
+                print("Insert")
+                cursor = connector.cnx.cursor()
+                val = (id, nama, harga, stok)
+                query = ("INSERT INTO produk VALUES (%s, %s, %s, %s)")
+                cursor.execute(query, val)
+                connector.cnx.commit()
+                cursor.close()
+            else:
+                print("Update")
+                cursor = connector.cnx.cursor()
+                val = (nama, harga, stok, id)
+                query = ("UPDATE produk SET nama=%s, harga=%s, stok=%s WHERE id=%s")
+                cursor.execute(query, val)
+                connector.cnx.commit()
+                cursor.close()
+
+        self.clear()
+
+        
 
 import source_rc
 
